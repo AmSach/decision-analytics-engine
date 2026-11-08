@@ -18,7 +18,8 @@ def compute_rfm_metrics(df: pd.DataFrame, reference_date: str | None = None) -> 
     - Tenure: Total days between first order and reference date.
     """
     data = df.copy()
-    data["order_date"] = pd.to_datetime(data["order_date"])
+    data["order_date"] = pd.to_datetime(data["order_date"], format="mixed", errors="coerce")
+    data.dropna(subset=["order_date", "customer_id"], inplace=True)
 
     if reference_date is None:
         ref_dt = data["order_date"].max()
@@ -33,16 +34,16 @@ def compute_rfm_metrics(df: pd.DataFrame, reference_date: str | None = None) -> 
         total_margin=("gross_margin", "sum"),
     ).reset_index()
 
-    rfm["recency_days"] = (ref_dt - rfm["last_order"]).dt.days
-    rfm["tenure_days"] = (ref_dt - rfm["first_order"]).dt.days
+    rfm["recency_days"] = (ref_dt - rfm["last_order"]).dt.days.fillna(0).astype(int)
+    rfm["tenure_days"] = (ref_dt - rfm["first_order"]).dt.days.fillna(0).astype(int)
     rfm["frequency"] = rfm["order_count"] - 1
-    rfm["avg_order_value"] = (rfm["total_revenue"] / rfm["order_count"]).round(2)
-    rfm["avg_margin_per_order"] = (rfm["total_margin"] / rfm["order_count"]).round(2)
+    rfm["avg_order_value"] = np.where(rfm["order_count"] > 0, (rfm["total_revenue"] / rfm["order_count"]).round(2), 0.0)
+    rfm["avg_margin_per_order"] = np.where(rfm["order_count"] > 0, (rfm["total_margin"] / rfm["order_count"]).round(2), 0.0)
 
     # Quantile-based RFM Scoring
-    rfm["r_score"] = pd.qcut(rfm["recency_days"].rank(method="first"), 4, labels=[4, 3, 2, 1]).astype(int)
-    rfm["f_score"] = pd.qcut(rfm["order_count"].rank(method="first"), 4, labels=[1, 2, 3, 4]).astype(int)
-    rfm["m_score"] = pd.qcut(rfm["total_margin"].rank(method="first"), 4, labels=[1, 2, 3, 4]).astype(int)
+    rfm["r_score"] = pd.qcut(rfm["recency_days"].rank(method="first"), 4, labels=[4, 3, 2, 1]).fillna(1).astype(int)
+    rfm["f_score"] = pd.qcut(rfm["order_count"].rank(method="first"), 4, labels=[1, 2, 3, 4]).fillna(1).astype(int)
+    rfm["m_score"] = pd.qcut(rfm["total_margin"].rank(method="first"), 4, labels=[1, 2, 3, 4]).fillna(1).astype(int)
 
     # Segment mapping
     def assign_segment(row):
@@ -60,8 +61,7 @@ def compute_rfm_metrics(df: pd.DataFrame, reference_date: str | None = None) -> 
 
     rfm["segment"] = rfm.apply(assign_segment, axis=1)
 
-    # 12-Month Forward Estimated Margin (Heuristic BG/NBD-inspired frequency projection)
-    # Forward transactions = frequency / (tenure / 365) * P(Active)
+    # 12-Month Forward Estimated Margin (Heuristic BG/NBD frequency projection)
     p_active = np.exp(-0.015 * rfm["recency_days"])
     rfm["prob_active"] = p_active.round(3)
     annual_freq = np.where(rfm["tenure_days"] > 30, (rfm["order_count"] / (rfm["tenure_days"] / 365.0)), rfm["order_count"])
@@ -85,18 +85,10 @@ def get_segment_waterfall_summary(rfm: pd.DataFrame) -> pd.DataFrame:
     ).reset_index()
 
     total_customers = summary["customer_count"].sum()
-    summary["customer_share_pct"] = ((summary["customer_count"] / total_customers) * 100.0).round(1)
+    summary["customer_share_pct"] = ((summary["customer_count"] / total_customers) * 100.0).round(1) if total_customers > 0 else 0.0
     summary["avg_recency_days"] = summary["avg_recency_days"].round(1)
     summary["total_historical_margin"] = summary["total_historical_margin"].round(2)
     summary["forward_12m_expected_margin"] = summary["forward_12m_expected_margin"].round(2)
     summary["avg_prob_active"] = (summary["avg_prob_active"] * 100.0).round(1)
 
     return summary.sort_values(by="forward_12m_expected_margin", ascending=False)
-
-
-if __name__ == "__main__":
-    from data_generator import generate_ecommerce_dataset
-    tx, _ = generate_ecommerce_dataset(num_customers=600, num_days=200)
-    rfm_df = compute_rfm_metrics(tx)
-    print("RFM Summary by Customer Segment:")
-    print(get_segment_waterfall_summary(rfm_df))

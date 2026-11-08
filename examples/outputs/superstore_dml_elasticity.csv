@@ -1,0 +1,2 @@
+sku,causal_elasticity_dml,standard_error,t_statistic,p_value,ci_95,naive_ols_elasticity,endogeneity_bias_delta,sample_size
+All_Portfolio,-0.03,0.007,-4.28,0.0,"(-0.043, -0.016)",-0.03,0.0,9406

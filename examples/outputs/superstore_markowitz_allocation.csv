@@ -1,0 +1,4 @@
+channel_or_asset,historical_mean_roas,historical_volatility,optimal_weight_pct,allocated_budget
+Furniture,inf,,33.33,166666.67
+Office Supplies,50.852,233.645,33.33,166666.67
+Technology,inf,,33.33,166666.67

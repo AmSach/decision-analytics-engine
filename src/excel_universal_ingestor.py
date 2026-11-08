@@ -42,7 +42,7 @@ class UniversalExcelIngestor:
         ],
         "gross_revenue": [
             r"gross.*rev.*", r"net.*sales", r"total.*sales", r"revenue", 
-            r"sales", r"total.*amount", r"order.*amount", r"invoice.*amt", r"extended.*price"
+            r"\bsales\b", r"total.*amount", r"order.*amount", r"invoice.*amt", r"extended.*price"
         ],
         "cogs": [
             r"\bcogs\b", r"unit.*cost", r"prod.*cost", r"cost.*goods", 
@@ -61,7 +61,7 @@ class UniversalExcelIngestor:
     def _clean_numeric(self, series: pd.Series) -> pd.Series:
         """Cleans currency strings, percentages, and commas into pure float."""
         if pd.api.types.is_numeric_dtype(series):
-            return series.astype(float)
+            return series.astype(float).fillna(0.0)
         
         cleaned = (
             series.astype(str)
@@ -75,7 +75,7 @@ class UniversalExcelIngestor:
         # Check if Excel serial integer format (e.g. 44927 for year 2023)
         if pd.api.types.is_numeric_dtype(series) and series.mean() > 30000:
             return pd.to_datetime(series, unit="D", origin="1899-12-30", errors="coerce")
-        return pd.to_datetime(series, errors="coerce")
+        return pd.to_datetime(series, format="mixed", errors="coerce")
 
     def _match_column(self, col_name: str) -> str | None:
         """Fuzzy matches raw column name against semantic synonym patterns."""
@@ -125,7 +125,7 @@ class UniversalExcelIngestor:
             harmonized["customer_id"] = harmonized["customer_id"].astype(str).str.strip()
 
         if "order_date" in harmonized.columns:
-            harmonized["order_date"] = self._clean_datetime(harmonized["order_date"])
+            harmonized["parsed_order_date"] = self._clean_datetime(harmonized["order_date"])
 
         for num_col in ["effective_price", "quantity", "gross_revenue", "cogs", "discount_pct"]:
             if num_col in harmonized.columns:
@@ -171,10 +171,11 @@ class UniversalExcelIngestor:
         if "transaction_id" not in harmonized.columns:
             harmonized["transaction_id"] = [f"TX-{i + 1:07d}" for i in range(len(harmonized))]
 
-        # Automatically derive customer cohort month
-        if "order_date" in harmonized.columns and harmonized["order_date"].notna().sum() > 0:
-            first_orders = harmonized.groupby("customer_id")["order_date"].min().dt.strftime("%Y-%m")
+        # Automatically derive customer cohort month from parsed datetime
+        if "parsed_order_date" in harmonized.columns and harmonized["parsed_order_date"].notna().sum() > 0:
+            first_orders = harmonized.groupby("customer_id")["parsed_order_date"].min().dt.strftime("%Y-%m")
             harmonized["cohort_month"] = harmonized["customer_id"].map(first_orders)
-            harmonized["order_date"] = harmonized["order_date"].dt.strftime("%Y-%m-%d")
+            harmonized["order_date"] = harmonized["parsed_order_date"].dt.strftime("%Y-%m-%d")
+            harmonized.drop(columns=["parsed_order_date"], inplace=True)
 
         return harmonized

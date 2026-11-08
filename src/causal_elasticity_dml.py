@@ -30,6 +30,9 @@ def estimate_causal_elasticity_dml(
     if sku is not None:
         data = data[data["sku"] == sku].copy()
 
+    # Filter strictly positive price and quantity
+    data = data[(data["effective_price"] > 0) & (data["quantity"] > 0)].copy()
+
     if len(data) < 50:
         return {"error": "Insufficient sample size for DML (N < 50)"}
 
@@ -37,25 +40,38 @@ def estimate_causal_elasticity_dml(
     Y = np.log(data["quantity"].values)
     D = np.log(data["effective_price"].values)
 
-    # Encode confounders: Product fixed effects are essential for multi-product demand systems
     confounder_list = []
     
     if "sku" in data.columns and data["sku"].nunique() > 1:
-        sku_dummies = pd.get_dummies(data["sku"], drop_first=True, dtype=float).values
-        confounder_list.append(sku_dummies)
+        # If too many SKUs (e.g. > 50), use target frequency encoding to keep X compact
+        if data["sku"].nunique() > 50:
+            sku_freq = data["sku"].map(data["sku"].value_counts(normalize=True)).values.reshape(-1, 1)
+            confounder_list.append(sku_freq)
+        else:
+            sku_dummies = pd.get_dummies(data["sku"], drop_first=True, dtype=float).values
+            confounder_list.append(sku_dummies)
 
     if "tier" in data.columns:
         tier_dummies = pd.get_dummies(data["tier"], drop_first=True, dtype=float).values
         confounder_list.append(tier_dummies)
+    elif "Customer Segment" in data.columns:
+        seg_dummies = pd.get_dummies(data["Customer Segment"], drop_first=True, dtype=float).values
+        confounder_list.append(seg_dummies)
 
-    discount = data["discount_pct"].values.reshape(-1, 1)
-    confounder_list.append(discount)
+    if "discount_pct" in data.columns:
+        discount = data["discount_pct"].fillna(0.0).values.reshape(-1, 1)
+        confounder_list.append(discount)
 
     if "base_price" in data.columns:
-        base_ratio = (data["effective_price"] / data["base_price"]).values.reshape(-1, 1)
+        base_ratio = (data["effective_price"] / data["base_price"].replace(0, np.nan)).fillna(1.0).values.reshape(-1, 1)
         confounder_list.append(base_ratio)
 
+    if not confounder_list:
+        confounder_list.append(np.ones((len(data), 1)))
+
     X = np.hstack(confounder_list)
+    # Ensure strictly finite inputs
+    X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
 
     n = len(Y)
     Y_res = np.zeros(n)
@@ -70,12 +86,12 @@ def estimate_causal_elasticity_dml(
         D_train, D_test = D[train_idx], D[test_idx]
 
         # Model 1: E[Y | X]
-        model_y = GradientBoostingRegressor(n_estimators=50, max_depth=3, random_state=random_seed)
+        model_y = GradientBoostingRegressor(n_estimators=40, max_depth=3, random_state=random_seed)
         model_y.fit(X_train, Y_train)
         Y_res[test_idx] = Y_test - model_y.predict(X_test)
 
         # Model 2: E[D | X]
-        model_d = GradientBoostingRegressor(n_estimators=50, max_depth=3, random_state=random_seed)
+        model_d = GradientBoostingRegressor(n_estimators=40, max_depth=3, random_state=random_seed)
         model_d.fit(X_train, D_train)
         D_res[test_idx] = D_test - model_d.predict(X_test)
 

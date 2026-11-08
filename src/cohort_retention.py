@@ -14,19 +14,26 @@ def compute_cohort_retention(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFra
     Expects df with ['customer_id', 'order_date', 'cohort_month', 'gross_revenue'].
     """
     data = df.copy()
-    data["order_date"] = pd.to_datetime(data["order_date"])
-    data["order_month"] = data["order_date"].dt.to_period("M")
-    data["cohort_period"] = pd.to_datetime(data["cohort_month"]).dt.to_period("M")
+    data["order_date"] = pd.to_datetime(data["order_date"], format="mixed", errors="coerce")
+    data["cohort_month_dt"] = pd.to_datetime(data["cohort_month"], format="mixed", errors="coerce")
+    data.dropna(subset=["order_date", "cohort_month_dt"], inplace=True)
 
-    # Calculate period offset
+    data["order_month"] = data["order_date"].dt.to_period("M")
+    data["cohort_period"] = data["cohort_month_dt"].dt.to_period("M")
+
+    # Calculate non-negative period offset
     data["period_number"] = (
         (data["order_month"].dt.year - data["cohort_period"].dt.year) * 12
         + (data["order_month"].dt.month - data["cohort_period"].dt.month)
     )
+    data = data[data["period_number"] >= 0].copy()
 
     # 1. Customer Counts Matrix
     cohort_group = data.groupby(["cohort_month", "period_number"])
     user_cohort = cohort_group["customer_id"].nunique().unstack(1)
+    if user_cohort.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
     cohort_sizes = user_cohort.iloc[:, 0]
     user_retention_pct = user_cohort.divide(cohort_sizes, axis=0) * 100.0
 
@@ -46,7 +53,10 @@ def compute_churn_hazard(retention_matrix: pd.DataFrame) -> pd.DataFrame:
     S(t) = S(t-1) * (1 - h(t))
     Guarantees h(t) in [0, 1] and S(t) monotonically non-increasing.
     """
-    periods = sorted([c for c in retention_matrix.columns if isinstance(c, (int, np.integer))])
+    if retention_matrix.empty:
+        return pd.DataFrame()
+
+    periods = sorted([c for c in retention_matrix.columns if isinstance(c, (int, np.integer)) and c >= 0])
     
     hazard_records = []
     current_survival = 1.0
@@ -58,12 +68,10 @@ def compute_churn_hazard(retention_matrix: pd.DataFrame) -> pd.DataFrame:
             current_survival = 1.0
         else:
             p_prev = periods[i - 1]
-            # Consider cohorts with non-null values at both p_prev and p
             valid_mask = retention_matrix[p_prev].notna() & retention_matrix[p].notna()
             if valid_mask.sum() > 0:
                 prev_sum = retention_matrix.loc[valid_mask, p_prev].sum()
                 curr_sum = retention_matrix.loc[valid_mask, p].sum()
-                # Conditional retention rate
                 cond_ret = min(1.0, max(0.0, curr_sum / prev_sum)) if prev_sum > 0 else 0.0
                 hazard_rate = 1.0 - cond_ret
             else:
