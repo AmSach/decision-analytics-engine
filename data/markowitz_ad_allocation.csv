@@ -1,0 +1,5 @@
+channel_or_asset,historical_mean_roas,historical_volatility,optimal_weight_pct,allocated_budget
+Paid_Search,3.842,0.303,40.0,80000.0
+Email,4.468,0.308,40.0,80000.0
+Organic_SEO,3.206,0.192,20.0,40000.0
+Social_Ads,2.811,0.39,0.0,0.0
