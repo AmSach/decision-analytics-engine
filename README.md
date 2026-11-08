@@ -1,12 +1,12 @@
 # Decision Analytics Engine
-### Advanced Econometric Modeling, Adversarial Game Theory & Palantir-Grade Operational Ontology
+### Advanced Econometric Modeling, Adversarial Game Theory & Operations Research Intelligence
 
 [![CI Test Suite](https://github.com/AmSach/decision-analytics-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/AmSach/decision-analytics-engine)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Unit Tests: 26 Passed](https://img.shields.io/badge/tests-26%20passed-brightgreen.svg)](tests/)
+[![Unit Tests: 30 Passed](https://img.shields.io/badge/tests-30%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-A boardroom-grade enterprise decision architecture engineered for C-suite executives, corporate strategy leaders, and graduate business school quants. Moving past descriptive aggregates and vanity dashboards, this engine deploys causal econometric identification, adversarial game-theoretic pricing, polycentric commons governance, synthetic quasi-experiments, Markowitz capital frontiers, and an enterprise operational ontology.
+A boardroom-grade enterprise decision architecture engineered for C-suite executives, corporate strategy leaders, and graduate business school quants. Moving past descriptive aggregates and vanity dashboards, this engine deploys causal econometric identification, adversarial game-theoretic pricing, polycentric commons governance, synthetic quasi-experiments, Markowitz capital frontiers, multi-echelon inventory optimization, multivariate anomaly detection, and enterprise supply network graph theory.
 
 ```
                                  [ Multi-Channel Order & Path Streams ]
@@ -23,12 +23,11 @@ A boardroom-grade enterprise decision architecture engineered for C-suite execut
   Abadie Donor Pool Match     Quadratic Programming        Fuzzy Column Resolver    Negative Working Capital
   Counterfactual Lift Est.    VaR 95% Ad Allocation        Messy Workbook Ingest    Treasury Yield Generation
          │                         │                               │                         │
-         └─────────────────────────┴───────────────┬───────────────┴─────────────────────────┘
-                                                   ▼
-                                [ Palantir-Grade Decision Ontology ]
-                                 - Live Operational Risk Telemetry
-                                 - Counterfactual War-Gaming Sandbox
-                                 - Blast Radius & Remediation Gates
+         ├─────────────────────────┼───────────────────────────────┼─────────────────────────┤
+         ▼                         ▼                               ▼                         ▼
+ [ Multi-Echelon MEIO ]      [ Multivariate Anomaly ]     [ Supply Network Graph ] [ Customer Equity CLV ]
+  Stochastic Safety Stock     Mahalanobis Regularization   PageRank Node Authority  Kaplan-Meier Survival
+  Normal Unit Loss G(z)       Chi-Square P-Value Outliers  Systemic Fragility Index Forward RFM Waterfall
 ```
 
 ---
@@ -50,7 +49,7 @@ Shared ad auction pools (Google/Meta Ads) are an open-access fishing lake. When 
 **What Our Engine Does:** A watchtower tracks the Commons Depletion Index. The instant congestion triggers an automated kill-gate, your budget quietly pulls out of the war and slips down a private canal (high-ROI email and organic channels), acquiring customers for $15 while competitors incinerate capital.
 
 ### D. The Glowing Pinball Machine (Spectral Graph Attribution)
-Customer journeys are pinballs bouncing across touchpoints: Instagram $\to$ Tech Blog $\to$ Retargeting $\to$ Email $\to$ Purchase. Last-click attribution gives 100% of the glory to Email just because it was touched last.  
+Customer journeys are pinballs bouncing across touchpoints: Instagram -> Tech Blog -> Retargeting -> Email -> Purchase. Last-click attribution gives 100% of the glory to Email just because it was touched last.  
 **What Spectral Graph Theory Does:** It treats the marketing ecosystem as an electrical grid. Using Perron-Frobenius leading eigenvectors and Katz attenuation, it measures structural network bridges, proving which early channels created the momentum so you never cut the fuel line.
 
 ### E. The Parallel Universe Twin (Abadie Synthetic Control)
@@ -67,22 +66,23 @@ Customers pay immediately on Day 0. Inventory turns in 14 days. Suppliers are pa
 
 ---
 
-## 2. Palantir-Grade Enterprise Architecture
+## 2. Advanced Operations Research & Decision Algorithms
 
-### A. Enterprise Decision Ontology & Operational Digital Twin (`src/enterprise_ontology.py`)
-Maps heterogeneous business tables into an interconnected relational object graph linking:
-$$\text{Customers} \longleftrightarrow \text{Transactions} \longleftrightarrow \text{SKUs} \longleftrightarrow \text{Marketing Channels} \longleftrightarrow \text{Working Capital}$$
-Tracks real-time operational risk telemetry and issues automated trigger actions:
-* Churn Hazard Alerts: Monitors Kaplan-Meier survival drops at Day 30-45.
-* Elasticity Fragility: Detects SKU concentration risks exceeding 40% of revenue.
-* Liquidity Telemetry: Monitors whether operational float covers baseline debt-service hurdles.
+### A. Multi-Echelon Inventory Optimization & Dynamic Safety Stock (`src/supply_chain_meio.py`)
+Computes mathematically optimal safety stock and reorder points under joint demand and lead-time stochasticity:
+$$\sigma_{LTD}^2 = \mu_L \cdot \sigma_D^2 + \mu_D^2 \cdot \sigma_L^2$$
+$$SS = z_{\alpha} \cdot \sigma_{LTD}, \quad ROP = \mu_D \mu_L + SS$$
+Calculates expected unit shortage per cycle via the standard normal loss function $G(z) = \phi(z) - z(1 - \Phi(z))$ and balances Economic Order Quantity (EOQ) against working capital holding costs across service level tiers (90%, 95%, 98%, 99%).
 
-### B. Counterfactual War-Gaming Scenario Sandbox (`src/scenario_sandbox.py`)
-Enables executives to fork business states and simulate multi-vector macroeconomic shocks:
-* Rival Price Attacks (-15% competitor discounting)
-* Supply Chain Inflation (+20% COGS jump)
-* Working Capital Term Reductions (-15 days DPO compression)
-Calculates the exact P&L margin blast radius and issues board-level remediation protocols.
+### B. Multivariate Operational Anomaly & Margin Leakage Engine (`src/multivariate_anomaly.py`)
+Surveys multi-dimensional transaction vectors (Revenue, Margin, Discount, Quantity, Shipping Cost) using regularized Mahalanobis Distance:
+$$D_M^2 = (X - \mu)^T (\Sigma + \lambda I)^{-1} (X - \mu)$$
+Under multivariate normality, $D_M^2 \sim \chi^2_k$. Evaluates exact survival p-values ($p < 0.01$) to flag predatory discount abuses, severe negative margin leaks, and logistics fulfillment cost blowouts.
+
+### C. Enterprise Supply & Dependency Network Graph (`src/supply_network_graph.py`)
+Constructs bipartite and multipartite operational graphs linking Accounts, SKUs, Categories, and Logistics Hubs. Solves the stationary PageRank authority vector via power iteration:
+$$\mathbf{r} = \left(\frac{1 - d}{N}\right) \mathbf{1} + d \mathbf{M} \mathbf{r}$$
+Computes degree centrality and systemic fragility indices to isolate single points of failure (SPOF) and margin concentration risks across the operating network.
 
 ---
 
@@ -96,9 +96,11 @@ The engine was benchmarked on the canonical **Global Superstore Enterprise Retai
 | **Customer Equity Waterfall** | [`superstore_clv_waterfall.csv`](examples/outputs/superstore_clv_waterfall.csv) | 746 **Champions** deliver **$771,207.65** in 12-month forward expected net margin equity (77.8% of total portfolio equity). |
 | **DuPont 3-Tier ROE** | [`superstore_dupont_roe.csv`](examples/outputs/superstore_dupont_roe.csv) | Total ROE of **113.75%**, decomposed into 26.15% net profit margin, 2.18x asset turnover, and 2.00x equity leverage. |
 | **Stochastic Cash Float Yield** | [`superstore_working_capital_float.csv`](examples/outputs/superstore_working_capital_float.csv) | -44 days Cash Conversion Cycle (CCC) generated **$68,363.39/year** in risk-free treasury float returns. |
-| **Palantir Decision Ontology** | [`superstore_ontology_telemetry.json`](examples/outputs/superstore_ontology_telemetry.json) | Board Alert: *SUSTAINABLE RUNWAY: Deploy capital into Markowitz-optimized acquisition channels.* |
-| **War-Gaming Blast Radius** | [`superstore_war_gaming_blast_radius.csv`](examples/outputs/superstore_war_gaming_blast_radius.csv) | Macro Shock (15% rival price drop + 20% freight cost surge) caused **$-1,288,284.70 (-22.15%)** margin erosion, triggering the *Critical Defense Kill-Gate*. |
+| **Multi-Echelon MEIO Policy** | [`superstore_inventory_meio.csv`](examples/outputs/superstore_inventory_meio.csv) | Optimized inventory policies across 1,263 operational categories, committing **$646,081.87** working capital while achieving 99.8%+ fill rates. |
+| **Multivariate Anomaly Leakage**| [`superstore_anomaly_leakage_summary.csv`](examples/outputs/superstore_anomaly_leakage_summary.csv) | Isolated 268 anomalous transactions (2.84% anomaly rate) via Mahalanobis distance at $p < 0.01$. |
+| **Network Fragility & SPOF** | [`superstore_network_vulnerability.csv`](examples/outputs/superstore_network_vulnerability.csv) | Identified Technology (Fragility: 64.66) and Furniture (Fragility: 51.72) as primary systemic throughput dependencies. |
 | **Synthetic Control Lift** | [`superstore_synthetic_control_lift.csv`](examples/outputs/superstore_synthetic_control_lift.csv) | Abadie Synthetic Control isolated true quarterly promotional expansion lift of **+$7,321.58/quarter** against donor regions. |
+| **Markowitz Capital Allocation**| [`superstore_markowitz_allocation.csv`](examples/outputs/superstore_markowitz_allocation.csv) | Solved optimal Pareto capital allocation across Furniture, Office Supplies, and Technology under VaR constraints. |
 
 ---
 
@@ -127,15 +129,16 @@ decision-analytics-engine/
 ├── data/                             <- Generated transaction datasets and pipeline CSV outputs
 ├── examples/
 │   ├── raw_online_data/              <- Raw Global Superstore benchmark dataset (9,426 rows)
-│   ├── outputs/                      <- Real-world benchmark CSV and JSON deliverables
+│   ├── outputs/                      <- Real-world benchmark CSV deliverables
 │   ├── run_superstore_benchmark.py   <- Benchmark execution script on live retail data
 │   └── README.md                     <- Detailed case study writeup and empirical findings
 ├── src/
 │   ├── __init__.py
 │   ├── data_generator.py             <- Multi-channel transaction and path synthesis
 │   ├── excel_universal_ingestor.py   <- Universal messy Excel/CSV schema harmonizer
-│   ├── enterprise_ontology.py        <- Palantir-style operational ontology digital twin
-│   ├── scenario_sandbox.py           <- Counterfactual war-gaming shock simulator
+│   ├── supply_chain_meio.py          <- Multi-echelon inventory and safety stock optimizer
+│   ├── multivariate_anomaly.py       <- Mahalanobis distance margin leak and outlier engine
+│   ├── supply_network_graph.py       <- PageRank network graph centrality and fragility
 │   ├── cohort_retention.py           <- Longitudinal cohort and Kaplan-Meier churn hazard
 │   ├── price_elasticity.py           <- Econometric log-linear demand regression models
 │   ├── causal_elasticity_dml.py      <- Double / Debiased Machine Learning (DML) engine
@@ -153,7 +156,7 @@ decision-analytics-engine/
 │   ├── test_analytics.py             <- Baseline mathematical invariant tests (11 passing)
 │   ├── test_advanced_algorithms.py   <- Game-theory and DML invariant tests (8 passing)
 │   ├── test_excel_and_new_algorithms.py <- Synthetic Control, Markowitz & Excel tests (3 passing)
-│   └── test_palantir_suite.py        <- Ontology and scenario war-gaming tests (4 passing)
+│   └── test_supply_chain_and_anomalies.py <- MEIO, Mahalanobis & Network Graph tests (8 passing)
 ├── run_pipeline.py                   <- Master execution orchestrator producing all deliverables
 ├── requirements.txt                  <- Python dependency specifications
 └── README.md                         <- Executive documentation and architectural guide
@@ -161,7 +164,7 @@ decision-analytics-engine/
 
 ---
 
-## 6. Verification & Test Suite (26/26 Passing)
+## 6. Verification & Test Suite (30/30 Passing)
 
 Every module is governed by strict invariant unit tests:
 
@@ -170,6 +173,9 @@ python -m pytest -v tests/
 ```
 
 ### Verified Invariants:
+* `TestMultiEchelonInventoryOptimization`: Normal loss function monotonicity, service level safety stock monotonicity, EOQ working capital bounds, portfolio policy aggregation.
+* `TestMultivariateAnomalyDetection`: Regularized Mahalanobis distance non-negativity, Chi-Square p-value bounds, margin leak classification summary.
+* `TestEnterpriseNetworkGraph`: PageRank probability simplex conservation ($\sum r_i = 1.0$), degree centrality volume share, systemic fragility ranking.
 * `TestCausalElasticityDML`: Neyman-orthogonal score consistency, negative causal elasticity, valid asymptotic standard error bounds.
 * `TestAdversarialGamePricing`: Best-response profitability bounds, QRE probability simplex conservation, fixed-point convergence.
 * `TestOstromCommonsGovernance`: Pool congestion monotonicity, Ostrom CAC dominance over unregulated commons defection spirals.
@@ -177,8 +183,6 @@ python -m pytest -v tests/
 * `TestSyntheticControlEngine`: Donor weights non-negativity and convex combination ($\sum W = 1.0$), post-intervention causal lift detection.
 * `TestMarkowitzPortfolioOptimizer`: Budget conservation, channel allocation cap bounds, positive Sharpe ratio, non-negative 95% VaR.
 * `TestUniversalExcelIngestor`: Multi-format currency parsing, fuzzy synonym column mapping, automatic cohort derivation.
-* `TestEnterpriseDecisionOntology`: Node binding consistency, SKU entity queries, automated action triggers.
-* `TestScenarioSandboxBlastRadius`: Multi-vector shock propagation, negative CCC float delta, critical defense kill-gate activation.
 * `TestStochasticFloatEngine`: Exact 3-tier DuPont identity reconciliation, non-decreasing cumulative float yield.
 * `TestCohortRetentionInvariants`: Period 0 retention normalization, Kaplan-Meier monotone survival, valid conditional hazard rates.
 
@@ -191,7 +195,7 @@ python -m pytest -v tests/
 git clone https://github.com/AmSach/decision-analytics-engine.git
 cd decision-analytics-engine
 
-# 2. Run test suite (26 passing tests)
+# 2. Run test suite (30 passing tests)
 python -m pytest -v tests/
 
 # 3. Execute master pipeline (Generates all synthetic deliverables)

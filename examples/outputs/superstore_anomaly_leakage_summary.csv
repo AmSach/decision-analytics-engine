@@ -1,0 +1,2 @@
+total_transactions,anomalous_transactions_count,anomaly_rate_pct,total_revenue,total_margin,anomalous_revenue_exposure,anomalous_margin_contribution,pure_margin_leakage_dollars
+9426,268,2.84,8949529.0,5817193.85,2303205.0,1497083.25,0.0
