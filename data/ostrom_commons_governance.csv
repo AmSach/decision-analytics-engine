@@ -1,0 +1,9 @@
+round,unreg_depletion_index,unreg_market_cac,unreg_conversions,ostrom_depletion_index,ostrom_blended_cac,ostrom_conversions,ostrom_status,cac_savings_pct
+1,0.84,52.4,381,0.84,29.15,686,KILL_GATE_ACTIVATED: Flank to Proprietary,44.4
+2,1.094,69.08,332,0.984,23.57,848,KILL_GATE_ACTIVATED: Flank to Proprietary,65.9
+3,1.431,96.47,274,1.238,21.05,949,KILL_GATE_ACTIVATED: Flank to Proprietary,78.2
+4,1.879,141.69,214,1.618,19.66,1017,KILL_GATE_ACTIVATED: Flank to Proprietary,86.1
+5,2.476,216.71,161,2.152,18.82,1062,KILL_GATE_ACTIVATED: Flank to Proprietary,91.3
+6,3.272,341.74,117,2.885,18.3,1092,KILL_GATE_ACTIVATED: Flank to Proprietary,94.6
+7,4.337,550.94,83,3.884,17.98,1112,KILL_GATE_ACTIVATED: Flank to Proprietary,96.7
+8,5.762,902.18,58,5.236,17.79,1124,KILL_GATE_ACTIVATED: Flank to Proprietary,98.0

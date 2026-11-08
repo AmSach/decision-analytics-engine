@@ -1,0 +1,4 @@
+strategy,our_price,expected_profit
+Level-1 Best Response,100.0,310000.0
+Level-3 Counter-Flank,85.0,264222.96
+Quantal Response Equilibrium (QRE),81.47,Fixed Point Nash/QRE

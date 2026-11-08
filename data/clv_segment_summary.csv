@@ -1,0 +1,6 @@
+segment,customer_count,avg_recency_days,total_historical_margin,forward_12m_expected_margin,avg_prob_active,customer_share_pct
+Champions,356,40.1,374757.35,504946.0,60.2,23.7
+Loyal Customers,271,56.1,153101.81,260656.92,47.6,18.1
+Recent Acquisitions,123,64.7,48953.97,100424.63,42.2,8.2
+At-Risk High-Value,299,183.4,246777.58,26430.95,7.9,19.9
+Dormant / Lost,451,223.3,175417.65,16522.17,5.3,30.1

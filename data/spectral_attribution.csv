@@ -1,0 +1,7 @@
+channel,perron_frobenius_centrality,katz_path_influence_pct,blended_spectral_share_pct,spectral_attributed_revenue
+Paid Search,28.54,16.67,22.6,340935.87
+Social Ads,23.03,16.67,19.85,299390.89
+Email,18.62,16.67,17.64,266110.81
+Organic Search,14.64,16.67,15.65,236110.4
+Direct,10.25,16.67,13.46,203048.42
+Referral,4.93,16.67,10.8,162891.97
