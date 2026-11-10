@@ -4,6 +4,7 @@
 [![CI Test Suite](https://github.com/AmSach/decision-analytics-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/AmSach/decision-analytics-engine)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Unit Tests: 30 Passed](https://img.shields.io/badge/tests-30%20passed-brightgreen.svg)](tests/)
+[![Resume PDF](https://img.shields.io/badge/Resume-1--Page%20PDF-brightgreen.svg)](Aman_Sachan_Resume.pdf)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 A boardroom-grade enterprise decision architecture engineered for C-suite executives, corporate strategy leaders, and graduate business school quants. Moving past descriptive aggregates and vanity dashboards, this engine deploys causal econometric identification, adversarial game-theoretic pricing, polycentric commons governance, synthetic quasi-experiments, Markowitz capital frontiers, multi-echelon inventory optimization, multivariate anomaly detection, and enterprise supply network graph theory.
