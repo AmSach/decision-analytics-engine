@@ -3,7 +3,7 @@
 
 [![CI Test Suite](https://github.com/AmSach/decision-analytics-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/AmSach/decision-analytics-engine)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Unit Tests: 30 Passed](https://img.shields.io/badge/tests-30%20passed-brightgreen.svg)](tests/)
+[![Unit Tests: 36 Passed](https://img.shields.io/badge/tests-36%20passed-brightgreen.svg)](tests/)
 [![Resume PDF](https://img.shields.io/badge/Resume-1--Page%20PDF-brightgreen.svg)](Aman_Sachan_Resume.pdf)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -85,6 +85,31 @@ Constructs bipartite and multipartite operational graphs linking Accounts, SKUs,
 $$\mathbf{r} = \left(\frac{1 - d}{N}\right) \mathbf{1} + d \mathbf{M} \mathbf{r}$$
 Computes degree centrality and systemic fragility indices to isolate single points of failure (SPOF) and margin concentration risks across the operating network.
 
+### D. Split-Conformal Prediction Engine (`src/conformal_prediction.py`)
+Computes distribution-free, finite-sample prediction sets for classification and intervals for regression with exact coverage guarantees:
+$$P(Y \in C(X)) \ge 1 - \alpha$$
+Calculates non-conformity scores on held-out calibration partitions, evaluates conformal quantiles $\hat{q}$, and returns singleton sets for decisive predictions while explicitly isolating boundary ambiguity.
+
+### E. Game-Theoretic SHAP Attribution Engine (`src/shap_attribution.py`)
+Provides mathematically consistent feature attribution satisfying Efficiency, Symmetry, Dummy (Null Player), and Additivity axioms:
+$$f(x) = \phi_0 + \sum_{j=1}^M \phi_j(x)$$
+Decomposes complex machine learning models into baseline values and individual feature attributions, delivering both global feature importance rankings and local waterfall explanations for individual decisions.
+
+### F. Cinelli & Hazlett Causal Sensitivity Engine (`src/causal_sensitivity_bounds.py`)
+Quantifies omitted variable bias and unobserved confounder robustness (Cinelli & Hazlett, 2020, JRSS-B):
+$$RV_q = \frac{1}{2} \left( \sqrt{f^4 + 4 f^2} - f^2 \right), \quad f = q \cdot \frac{|t_D|}{\sqrt{\text{df}}}$$
+Calculates partial $R^2$ values ($R^2_{Y \sim D|X}$), formal Robustness Values ($RV$ and $RV_{\alpha}$), and generates sensitivity stress-testing grids showing the exact confounder strength required to wipe out treatment effects.
+
+### G. Second-Order Markov Chain WPA & xROP Engine (`src/markov_wpa_xrop.py`)
+Evaluates sequential decision making, player impact, and high-pressure performance across state spaces:
+$$\Delta WP = WP(S_{t+1}) - WP(S_t), \quad xROP = \text{Actual Runs} - \text{Expected Runs}(S_t)$$
+Constructs transition matrices over leverage states, evaluates delivery-level Win Probability Added (WPA), Expected Runs Over Par (xROP), and computes clutch leverage indices under death-over pressure.
+
+### H. Multi-Constraint 0/1 Knapsack Auction Purse Optimizer (`src/knapsack_auction_optimizer.py`)
+Solves mixed-integer linear programming (MILP) capital and resource allocation under hard financial purse ceilings:
+$$\max \sum_{i=1}^n x_i \cdot V_i \quad \text{subject to} \quad \sum_{i=1}^n x_i \cdot C_i \le \text{Purse Ceiling}, \quad S_{\min} \le \sum_{i=1}^n x_i \le S_{\max}, \quad x_i \in \{0, 1\}$$
+Incorporates category quotas (overseas limits, role minimums), surplus-per-crore rankings, and remaining liquidity float analysis.
+
 ---
 
 ## 3. Real-World Benchmark on 9,426 Live Transactions (Global Superstore Case Study)
@@ -140,6 +165,11 @@ decision-analytics-engine/
 │   ├── supply_chain_meio.py          <- Multi-echelon inventory and safety stock optimizer
 │   ├── multivariate_anomaly.py       <- Mahalanobis distance margin leak and outlier engine
 │   ├── supply_network_graph.py       <- PageRank network graph centrality and fragility
+│   ├── conformal_prediction.py       <- Split-conformal distribution-free coverage engine
+│   ├── shap_attribution.py           <- Game-theoretic SHAP feature attribution engine
+│   ├── causal_sensitivity_bounds.py  <- Cinelli & Hazlett unobserved confounder RV engine
+│   ├── markov_wpa_xrop.py            <- Second-order Markov chain WPA and xROP engine
+│   ├── knapsack_auction_optimizer.py <- MILP capital allocation and purse optimizer
 │   ├── cohort_retention.py           <- Longitudinal cohort and Kaplan-Meier churn hazard
 │   ├── price_elasticity.py           <- Econometric log-linear demand regression models
 │   ├── causal_elasticity_dml.py      <- Double / Debiased Machine Learning (DML) engine
@@ -157,6 +187,7 @@ decision-analytics-engine/
 │   ├── test_analytics.py             <- Baseline mathematical invariant tests (11 passing)
 │   ├── test_advanced_algorithms.py   <- Game-theory and DML invariant tests (8 passing)
 │   ├── test_excel_and_new_algorithms.py <- Synthetic Control, Markowitz & Excel tests (3 passing)
+│   ├── test_screenings_and_new_algorithms.py <- Conformal, SHAP, Cinelli-Hazlett, WPA & Knapsack tests (6 passing)
 │   └── test_supply_chain_and_anomalies.py <- MEIO, Mahalanobis & Network Graph tests (8 passing)
 ├── run_pipeline.py                   <- Master execution orchestrator producing all deliverables
 ├── requirements.txt                  <- Python dependency specifications
@@ -165,7 +196,7 @@ decision-analytics-engine/
 
 ---
 
-## 6. Verification & Test Suite (30/30 Passing)
+## 6. Verification & Test Suite (36/36 Passing)
 
 Every module is governed by strict invariant unit tests:
 
@@ -174,6 +205,11 @@ python -m pytest -v tests/
 ```
 
 ### Verified Invariants:
+* `TestConformalPrediction`: Finite-sample distribution-free coverage bounds ($P \ge 1 - \alpha$), adaptive prediction set sizing, regression residual intervals.
+* `TestShapleyAttribution`: Game-theoretic efficiency axiom ($f(x) = \phi_0 + \sum \phi_j$), relative importance simplex conservation ($\sum = 100\%$), local decision attributions.
+* `TestCausalSensitivity`: Cinelli & Hazlett partial $R^2$ non-negativity, Robustness Value ($RV$) calculation, omitted variable bias erosion monotonicity.
+* `TestMarkovWPAxROP`: State transition matrix discretization, delivery-level Win Probability Added (WPA), Expected Runs Over Par (xROP), death-over clutch leverage index.
+* `TestKnapsackAuctionOptimizer`: Mixed-integer purse budget ceiling enforcement, squad size lower/upper bounds, overseas cap constraint, surplus-per-crore ranking.
 * `TestMultiEchelonInventoryOptimization`: Normal loss function monotonicity, service level safety stock monotonicity, EOQ working capital bounds, portfolio policy aggregation.
 * `TestMultivariateAnomalyDetection`: Regularized Mahalanobis distance non-negativity, Chi-Square p-value bounds, margin leak classification summary.
 * `TestEnterpriseNetworkGraph`: PageRank probability simplex conservation ($\sum r_i = 1.0$), degree centrality volume share, systemic fragility ranking.
