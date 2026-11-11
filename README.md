@@ -3,7 +3,7 @@
 
 [![CI Test Suite](https://github.com/AmSach/decision-analytics-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/AmSach/decision-analytics-engine)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Unit Tests: 36 Passed](https://img.shields.io/badge/tests-36%20passed-brightgreen.svg)](tests/)
+[![Unit Tests: 40 Passed](https://img.shields.io/badge/tests-40%20passed-brightgreen.svg)](tests/)
 [![Resume PDF](https://img.shields.io/badge/Resume-1--Page%20PDF-brightgreen.svg)](Aman_Sachan_Resume.pdf)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
