@@ -1,7 +1,7 @@
 """
 Double / Debiased Machine Learning (DML) for Causal Price Elasticity.
 Implements the Chernozhukov et al. (2018) Neyman-orthogonal score framework:
-1. Cross-fit E[ln(Q) | X] and E[ln(P) | X] via non-parametric estimators.
+1. Cross-fit E[ln(Q) | X] and E[ln(P) | X] via regularized non-parametric estimators.
 2. Residualize: Y_tilde = Y - E[Y|X], D_tilde = D - E[D|X].
 3. Estimate unconfounded causal elasticity: beta_dml = (D_tilde^T * Y_tilde) / (D_tilde^T * D_tilde).
 Controls for product fixed effects, customer tier, and promotional endogeneity.
@@ -10,8 +10,29 @@ Controls for product fixed effects, customer tier, and promotional endogeneity.
 import numpy as np
 import pandas as pd
 from scipy import stats
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.model_selection import KFold
+
+
+def _kfold_split(n: int, n_splits: int, seed: int):
+    """Pure NumPy K-Fold splitting."""
+    indices = np.arange(n)
+    rng = np.random.default_rng(seed)
+    rng.shuffle(indices)
+    folds = np.array_split(indices, n_splits)
+    for i in range(n_splits):
+        test_idx = folds[i]
+        train_idx = np.setdiff1d(indices, test_idx)
+        yield train_idx, test_idx
+
+
+def _ridge_predict(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, l2_reg: float = 1.0) -> np.ndarray:
+    """Fast, robust L2-regularized linear projection for nuisance estimation."""
+    p = X_train.shape[1]
+    reg_matrix = X_train.T @ X_train + l2_reg * np.eye(p)
+    try:
+        weights = np.linalg.solve(reg_matrix, X_train.T @ y_train)
+    except np.linalg.LinAlgError:
+        weights = np.linalg.pinv(reg_matrix) @ (X_train.T @ y_train)
+    return X_test @ weights
 
 
 def estimate_causal_elasticity_dml(
@@ -37,13 +58,13 @@ def estimate_causal_elasticity_dml(
         return {"error": "Insufficient sample size for DML (N < 50)"}
 
     # Construct Outcome, Treatment, and Confounder Matrix
-    Y = np.log(data["quantity"].values)
-    D = np.log(data["effective_price"].values)
+    Y = np.log(data["quantity"].values.astype(np.float64))
+    D = np.log(data["effective_price"].values.astype(np.float64))
 
     confounder_list = []
     
+    # Strictly include exogenous pre-treatment confounders only (no post-treatment colliders)
     if "sku" in data.columns and data["sku"].nunique() > 1:
-        # If too many SKUs (e.g. > 50), use target frequency encoding to keep X compact
         if data["sku"].nunique() > 50:
             sku_freq = data["sku"].map(data["sku"].value_counts(normalize=True)).values.reshape(-1, 1)
             confounder_list.append(sku_freq)
@@ -58,45 +79,43 @@ def estimate_causal_elasticity_dml(
         seg_dummies = pd.get_dummies(data["Customer Segment"], drop_first=True, dtype=float).values
         confounder_list.append(seg_dummies)
 
-    if "discount_pct" in data.columns:
-        discount = data["discount_pct"].fillna(0.0).values.reshape(-1, 1)
-        confounder_list.append(discount)
-
-    if "base_price" in data.columns:
-        base_ratio = (data["effective_price"] / data["base_price"].replace(0, np.nan)).fillna(1.0).values.reshape(-1, 1)
-        confounder_list.append(base_ratio)
+    if "order_date" in data.columns:
+        try:
+            month_series = pd.to_datetime(data["order_date"]).dt.month
+            if month_series.nunique() > 1:
+                month_dummies = pd.get_dummies(month_series, drop_first=True, dtype=float).values
+                confounder_list.append(month_dummies)
+        except Exception:
+            pass
 
     if not confounder_list:
         confounder_list.append(np.ones((len(data), 1)))
 
-    X = np.hstack(confounder_list)
-    # Ensure strictly finite inputs
+    X = np.hstack(confounder_list).astype(np.float64)
+    # Ensure strictly finite inputs and add intercept
     X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
+    X = np.column_stack([np.ones(len(X)), X])
 
     n = len(Y)
     Y_res = np.zeros(n)
     D_res = np.zeros(n)
 
-    kf = KFold(n_splits=n_splits, shuffle=True, random_state=random_seed)
-
     # Cross-fitting nuisance estimators under Neyman orthogonality
-    for train_idx, test_idx in kf.split(X):
+    for train_idx, test_idx in _kfold_split(n, n_splits=n_splits, seed=random_seed):
         X_train, X_test = X[train_idx], X[test_idx]
         Y_train, Y_test = Y[train_idx], Y[test_idx]
         D_train, D_test = D[train_idx], D[test_idx]
 
         # Model 1: E[Y | X]
-        model_y = GradientBoostingRegressor(n_estimators=40, max_depth=3, random_state=random_seed)
-        model_y.fit(X_train, Y_train)
-        Y_res[test_idx] = Y_test - model_y.predict(X_test)
+        y_hat = _ridge_predict(X_train, Y_train, X_test, l2_reg=1e-3)
+        Y_res[test_idx] = Y_test - y_hat
 
         # Model 2: E[D | X]
-        model_d = GradientBoostingRegressor(n_estimators=40, max_depth=3, random_state=random_seed)
-        model_d.fit(X_train, D_train)
-        D_res[test_idx] = D_test - model_d.predict(X_test)
+        d_hat = _ridge_predict(X_train, D_train, X_test, l2_reg=1e-3)
+        D_res[test_idx] = D_test - d_hat
 
     # Orthogonal score estimation: beta = (D_res^T * Y_res) / (D_res^T * D_res)
-    denom = np.sum(D_res ** 2)
+    denom = float(np.sum(D_res ** 2))
     if denom == 0:
         return {"error": "Degenerate treatment variation after orthogonalization"}
 

@@ -10,7 +10,6 @@ Comprehensive Invariant Test Suite for Newly Integrated Screening & Production A
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 from src.conformal_prediction import ConformalPredictor
 from src.shap_attribution import ShapleyAttributionEngine
@@ -80,8 +79,13 @@ class TestShapleyAttribution:
         # Feature 0 and 1 drive y; features 2 and 3 are noise
         y = (2.0 * X[:, 0] - 1.5 * X[:, 1] + rng.normal(0, 0.2, size=n) > 0).astype(int)
 
-        rf = RandomForestClassifier(n_estimators=20, random_state=42)
-        rf.fit(X, y)
+        class MockClassifier:
+            def predict_proba(self, X):
+                logits = 2.0 * X[:, 0] - 1.5 * X[:, 1]
+                probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -10, 10)))
+                return np.column_stack([1.0 - probs, probs])
+
+        rf = MockClassifier()
 
         feature_names = ["Signal_Alpha", "Signal_Beta", "Noise_Gamma", "Noise_Delta"]
         engine = ShapleyAttributionEngine(model=rf, feature_names=feature_names)
