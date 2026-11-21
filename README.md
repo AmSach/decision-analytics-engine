@@ -1,13 +1,36 @@
 # Decision Analytics Engine
-### Advanced Econometric Modeling, Adversarial Game Theory & Operations Research Intelligence
+### Advanced Econometric Modeling, Adversarial Game Theory, Operations Research & Native Desktop Node-Spreadsheet
 
 [![CI Test Suite](https://github.com/AmSach/decision-analytics-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/AmSach/decision-analytics-engine)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Unit Tests: 48 Passed](https://img.shields.io/badge/tests-48%20passed-brightgreen.svg)](tests/)
+[![Unit Tests: 51 Passed](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
 [![Resume PDF](https://img.shields.io/badge/Resume-1--Page%20PDF-brightgreen.svg)](Aman_Sachan_Resume.pdf)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-A boardroom-grade enterprise decision architecture engineered for C-suite executives, corporate strategy leaders, and graduate business school quants. Moving past descriptive aggregates and vanity dashboards, this engine deploys causal econometric identification, adversarial game-theoretic pricing, polycentric commons governance, synthetic quasi-experiments, Markowitz capital frontiers, multi-echelon inventory optimization, multivariate anomaly detection, Cash Flow at Risk (CFaR) Monte Carlo simulations, Bayesian multi-armed bandits, and random-coefficient product cannibalization models.
+A boardroom-grade enterprise decision architecture engineered for C-suite executives, corporate strategy leaders, and quantitative operators. Unifying 20+ advanced econometric, machine learning, and game-theoretic engines with a native high-speed desktop spreadsheet grid (PySide6 / Qt6), an interactive visual DAG pipeline canvas, autonomous swarm intelligence audits, and standalone Windows executable packaging.
+
+---
+
+## 1-Click Quick Start (Native Desktop App & Standalone Executable)
+
+The entire decision suite is bundled into a native desktop application with zero browser dependencies:
+
+* **Windows Standalone Executable (1-Click Run):**
+  - Double-click **`RUN_EXE.bat`** or **`dist\DecisionGraph\DecisionGraph.exe`**.
+  - Runs with zero Python or library dependencies required.
+* **Intelligent Auto-Detect Launcher:**
+  - Double-click **`START_APP.bat`**.
+  - Automatically runs `DecisionGraph.exe` if present; otherwise seamlessly boots via Python `run.py`.
+* **Terminal Launch:**
+  ```bash
+  python run.py
+  ```
+* **Run Deterministic Verification Suite (51 Tests):**
+  ```bash
+  python -m pytest -v
+  ```
+
+---
 
 ```
                                  [ Multi-Channel Order & Path Streams ]
